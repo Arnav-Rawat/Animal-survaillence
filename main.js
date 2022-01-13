@@ -8,14 +8,15 @@ function setup() {
     document.getElementById("status").innerHTML = "Status : Detecting Objects";
 
   }
-
+  objects = [];
   status= "";
-
+  
   function start()
 {
   objectDetector = ml5.objectDetector('cocossd', modelLoaded);
   document.getElementById("status").innerHTML = "Status : Detecting Objects";
   document.getElementById("animal").value;
+  object_name = document.getElementById("animal").value;
 
 }
 
@@ -43,4 +44,30 @@ function draw(){
       rect(objects[i].x, objects[i].y, objects[i].width, objects[i].height);
     }
   }
+
+  if(objects[i].label == object_name)
+  {
+    objectDetector.detect(video, gotResult);
+    for (i = 0; i < objects.length; i++) {
+      document.getElementById("status").innerHTML = "Status : Object Mentioned Found";
+      document.getElementById("number_of_objects").innerHTML = "Number of objects detected are : "+ objects.length;
+      var utterThis = new SpeechSynthesisUtterance("Object FOUND!!");
+      fill("#FF0000");
+      percent = floor(objects[i].confidence * 100);
+      text(objects[i].label + " " + percent + "%", objects[i].x + 15, objects[i].y + 15);
+      noFill();
+      stroke("#FF0000");
+      rect(objects[i].x, objects[i].y, objects[i].width, objects[i].height);
+    }
+  }
+
 }
+function gotResult(){
+    if (error) {
+      console.log(error);
+    }
+    console.log(results);
+    objects = results;
+}
+
+
